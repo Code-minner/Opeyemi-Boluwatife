@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowLeft, Send, Mail } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { articles } from "@/data/articles";
 
 // lucide-react v1 removed trademarked brand icons (Github, Linkedin, Facebook,
 // Instagram, etc). These are small inline replacements in the same 24x24
@@ -91,37 +92,6 @@ const socials = [
   { label: "Telegram", href: "https://t.me/Stem04", icon: Send },
   { label: "Facebook", href: "https://www.facebook.com/share/18xFHZ6gAC/", icon: Facebook },
   { label: "Instagram", href: "https://www.instagram.com/codeminner.tech/", icon: Instagram },
-];
-
-// 🎨 Each article carries its own background image. Drop in any file from
-//    /public/assets and it'll bleed through the glass panel on top.
-// If an image is missing/404s, the card falls back to a gradient instead of
-// going blank (see the `onError` handler on the <img> below).
-const articles = [
-  {
-    id: "kafka-golang",
-    title: "The simplest example is kafka + golang",
-    description:
-      "This article presents a simple way to implement a micro-service architecture using Kafka, Golang and Docker.",
-    href: "#",
-    image: "/assets/gradient.jpg",
-  },
-  {
-    id: "grpc-nextjs",
-    title: "Wiring gRPC into a Next.js edge runtime",
-    description:
-      "A walkthrough of streaming typed data from a Go service straight into React server components.",
-    href: "#",
-    image: "/assets/gradient.jpg",
-  },
-  {
-    id: "postgres-queues",
-    title: "Building reliable queues on plain Postgres",
-    description:
-      "Why you might not need Kafka or Redis at all, and how SKIP LOCKED gets you most of the way there.",
-    href: "#",
-    image: "/assets/gradient2.jpg",
-  },
 ];
 
 // Responsive slide width, expressed as Tailwind classes. Unlike the old
@@ -456,6 +426,8 @@ export default function Hero() {
                         </p>
                         <a
                           href={article.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="group inline-flex w-fit items-center gap-3 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-xs italic text-[#0c0c0b] sm:py-2 sm:pl-5 sm:pr-2 sm:text-sm"
                           onPointerDown={(e) => e.stopPropagation()}
                         >

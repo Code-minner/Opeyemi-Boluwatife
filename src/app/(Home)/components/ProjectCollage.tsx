@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { galleryProjects, type Project } from "@/data/projects";
 import { useSmartVideo } from "@/lib/useSmartVideo";
 import ScrollReveal from "@/components/ScrollReveal";
-import { warmVideo, warmVideos } from "@/lib/warmVideo";
+import { warmVideo } from "@/lib/warmVideo";
 
 const slides = galleryProjects;
 const COUNT = slides.length;
@@ -124,35 +124,27 @@ export default function ProjectCollage() {
     [goTo],
   );
 
+  // Only warm the active clip + the next one — never fight the network with 5× large MP4s.
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
-
-    // Warm the first clips before the carousel is fully on screen.
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
-        const urls = [
-          slides[0]?.video,
-          slides[1]?.video,
-          slides[slides.length - 1]?.video,
-        ].filter(Boolean) as string[];
-        warmVideos(urls, "auto");
+        warmVideo(slides[0]?.video ?? "", "auto");
         io.disconnect();
       },
-      { rootMargin: "400px 0px", threshold: 0.01 },
+      { rootMargin: "240px 0px", threshold: 0.01 },
     );
     io.observe(stage);
     return () => io.disconnect();
   }, []);
 
-  // Keep current + neighbours buffered while browsing.
   useEffect(() => {
-    const urls = [0, 1, -1, 2, -2].map((d) => {
-      const i = ((index + d) % COUNT + COUNT) % COUNT;
-      return slides[i]?.video;
-    }).filter(Boolean) as string[];
-    warmVideos(urls, "auto");
+    const current = slides[index]?.video;
+    const next = slides[(index + 1) % COUNT]?.video;
+    if (current) warmVideo(current, "auto");
+    if (next) warmVideo(next, "metadata");
   }, [index]);
 
   useEffect(() => {
@@ -355,7 +347,8 @@ const SlideCard = memo(function SlideCard({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const abs = Math.abs(offset);
   const isFront = abs < 0.35;
-  const near = abs < 0.85;
+  // Only the centered card downloads media — side cards stay as light shells.
+  const shouldLoadVideo = isFront;
   const visible = abs < (layout.mobile ? 1.9 : 2.35);
   const [ready, setReady] = useState(false);
 
@@ -367,33 +360,25 @@ const SlideCard = memo(function SlideCard({
   const blur = Math.min(abs, 2) * (layout.mobile ? 1.6 : 2.6);
   const brightness = 1 - Math.min(abs, 2) * 0.3;
 
-  // Start from 0 — random seek forces a late download and feels slow.
-  useSmartVideo(videoRef, near, { enabled: visible, randomStartOnce: false });
+  useSmartVideo(videoRef, shouldLoadVideo, { enabled: shouldLoadVideo, randomStartOnce: false });
 
   useEffect(() => {
-    setReady(false);
+    if (!shouldLoadVideo) {
+      setReady(false);
+      return;
+    }
     const video = videoRef.current;
-    if (!video || !visible) return;
+    if (!video) return;
 
     const mark = () => setReady(true);
     if (video.readyState >= 2) mark();
     video.addEventListener("loadeddata", mark);
     video.addEventListener("canplay", mark);
-    // Kick the network immediately for front/near cards.
-    if (near) {
-      video.preload = "auto";
-      try {
-        video.load();
-      } catch {
-        // ignore
-      }
-    }
-
     return () => {
       video.removeEventListener("loadeddata", mark);
       video.removeEventListener("canplay", mark);
     };
-  }, [project.video, visible, near]);
+  }, [project.video, shouldLoadVideo]);
 
   const handleClick = () => {
     if (suppressClickRef.current) {
@@ -426,19 +411,21 @@ const SlideCard = memo(function SlideCard({
         className="pc-face"
       >
         <span className={`pc-video-shell ${ready ? "is-ready" : ""}`}>
-          <video
-            ref={videoRef}
-            className="h-full w-full object-cover object-center"
-            src={project.video}
-            muted
-            loop
-            playsInline
-            preload={near ? "auto" : "metadata"}
-            disablePictureInPicture
-            disableRemotePlayback
-          />
+          {shouldLoadVideo ? (
+            <video
+              ref={videoRef}
+              className="h-full w-full object-cover object-center"
+              src={project.video}
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              disableRemotePlayback
+            />
+          ) : null}
         </span>
-        <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+        <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
         {isFront && (
           <span className="pc-play pointer-events-none">

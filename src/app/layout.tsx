@@ -17,8 +17,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Selected project recordings.",
+  title: {
+    default: "Opeyemi Boluwatife — Full-stack Developer",
+    template: "%s · Opeyemi Boluwatife",
+  },
+  description:
+    "Full-stack developer portfolio — selected product work, case studies, and interactive experiments.",
+  openGraph: {
+    title: "Opeyemi Boluwatife — Full-stack Developer",
+    description:
+      "Full-stack developer portfolio — selected product work, case studies, and interactive experiments.",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

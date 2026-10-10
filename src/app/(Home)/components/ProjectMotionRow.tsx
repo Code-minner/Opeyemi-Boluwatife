@@ -28,8 +28,8 @@ function VideoStage({ project, reverse }: { project: Project; reverse: boolean }
           setVisible(false);
         }
       },
-      // Start fetching well before the row is on screen.
-      { threshold: 0.05, rootMargin: "280px 0px" },
+      // Warm just before the row enters — avoid early multi-download storms.
+      { threshold: 0.15, rootMargin: "120px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();

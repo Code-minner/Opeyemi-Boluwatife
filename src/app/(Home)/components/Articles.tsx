@@ -3,53 +3,9 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { articles, type Article } from "@/data/articles";
 
 const MONO_FONT = { fontFamily: "var(--font-geist-mono, ui-monospace, monospace)" };
-
-type Article = {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-};
-
-const articles: Article[] = [
-  {
-    id: "kafka-golang",
-    title: "The simplest example is kafka + golang",
-    description:
-      "This article presents a simple way to implement a micro-service architecture using Kafka, Golang and Docker.",
-    href: "#",
-  },
-  {
-    id: "grpc-nextjs",
-    title: "Wiring gRPC into a Next.js edge runtime",
-    description:
-      "A walkthrough of streaming typed data from a Go service straight into React server components.",
-    href: "#",
-  },
-  {
-    id: "postgres-queues",
-    title: "Building reliable queues on plain Postgres",
-    description:
-      "Why you might not need Kafka or Redis at all, and how SKIP LOCKED gets you most of the way there.",
-    href: "#",
-  },
-  {
-    id: "observability-otel",
-    title: "Wiring up OpenTelemetry without the boilerplate",
-    description:
-      "A minimal setup for traces and metrics across a Go + Next.js stack, without pulling in a vendor SDK.",
-    href: "#",
-  },
-  {
-    id: "redis-ratelimits",
-    title: "Rate limiting at the edge with Redis",
-    description:
-      "A sliding-window limiter that survives multi-region deploys, and where the naive version falls apart.",
-    href: "#",
-  },
-];
 
 const PAGE_SIZE = 4;
 
@@ -126,7 +82,7 @@ export default function Articles() {
 
 function ArticleCard({ article }: { article: Article }) {
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-white/15 p-6 sm:p-8">
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/15 p-6 sm:p-8">
       <div>
         <h3 className="text-lg font-semibold leading-snug sm:text-xl">{article.title}</h3>
         <p className="mt-4 text-sm leading-relaxed text-white/70">{article.description}</p>
@@ -134,6 +90,8 @@ function ArticleCard({ article }: { article: Article }) {
 
       <a
         href={article.href}
+        target="_blank"
+        rel="noopener noreferrer"
         className="group mt-8 inline-flex w-fit items-center gap-3"
         aria-label={`Read more: ${article.title}`}
       >

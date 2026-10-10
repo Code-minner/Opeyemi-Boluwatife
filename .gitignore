@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# video compression scratch
+/public/videos/_optimized/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

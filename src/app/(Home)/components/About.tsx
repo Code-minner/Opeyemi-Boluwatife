@@ -120,7 +120,7 @@ export default function AboutMe() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
           <p className="text-sm text-white/50">... /About me ...</p>
           <p className="max-w-md text-base leading-relaxed text-white/85 sm:text-lg">
-            Hello! I&apos;m Nikita, I&apos;m a{" "}
+            Hello! I&apos;m Opeyemi, I&apos;m a{" "}
             <em className="italic text-white">full-stack developer</em>.
             <br />
             More than <em className="italic text-white">5 years</em> experience.
@@ -175,13 +175,13 @@ export default function AboutMe() {
           />
           <div className="relative aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-b from-white/10 via-white/5 to-white/[0.02]">
             <Image
-              src="/nikita-portrait.jpg"
-              alt="Portrait of Nikita"
+              src="/opeyemi-portrait.jpg"
+              alt="Portrait of Opeyemi Boluwatife"
               fill
               sizes="(min-width: 1024px) 420px, 90vw"
-              quality={75}
+              quality={80}
               loading="lazy"
-              className="relative z-10 object-contain"
+              className="relative z-10 object-cover object-center"
             />
           </div>
         </ScrollReveal>
